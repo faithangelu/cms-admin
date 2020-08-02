@@ -13,12 +13,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    // return ['foo' => 'bar'];
-    // return view('welcome');
-    return view('auth/login');
-});
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('template');
+Route::get('/', function () {
+    return redirect('home');
+});
+
+Route::get('fetchData', 'HomeController@fetchData');
+
+Route::resource('user', 'Modules\UserController');
+Route::resource('marketplace', 'Modules\MarketPlaceController');
+Route::resource('customer', 'Modules\CustomerController');
+
+// User Module
+Route::get('{any}','HomeController@index')->where('any', '.*');

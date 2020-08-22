@@ -38,7 +38,6 @@ class MarketPlaceController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request; exit;
 
         $this->validate($request, [
             'project_name' => ['required', 'string', 'max:255'],
@@ -47,24 +46,22 @@ class MarketPlaceController extends Controller
             'project_desc' => ['required', 'string'],
             'project_status' => ['required', 'string']
         ]);    
-
-
-        $marketplace = Marketplace::create([
-            'project_name' => $request['project_name'],
-            'project_location' => $request['project_location'],
-            'project_price' => $request['project_price'],
-            'project_desc' => $request['project_desc'],
-            'project_status' => $request['project_status'],
-            'project_image' => $this->upload($request['project_image'], $request['project_image_name'])
-        ]);
-
-
-        if ($marketplace) {
+        
+        $project = new Marketplace;
+        $project->project_name     = $request->project_name;
+        $project->project_location = $request->project_location;
+        $project->project_price    = $request->project_price;
+        $project->project_desc     = $request->project_desc;
+        $project->project_status   = $request->project_status;
+        $project->project_image    = $this->upload($request['project_image'], $request['project_image_name']); 
+    
+        if ($project->save()) {
             return ['status' => 'success' , 'message' => 'Project successfully saved!'];
         }
         else {
             return ['status' => 'false' , 'message' => 'Something went wrong!'];
         }
+
         
     }
 
@@ -97,9 +94,34 @@ class MarketPlaceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $project_id)
     {
-        //
+        
+        $project = Marketplace::findOrFail($project_id);      
+
+        $this->validate($request, [
+            'project_name' => ['required', 'string', 'max:255'],
+            'project_location' => ['required', 'string', 'max:255'],
+            'project_price' => ['required', 'string', 'max:255'],
+            'project_desc' => ['required', 'string'],
+            'project_status' => ['required', 'string'],
+            'project_image' => ['required', 'string']
+        ]);                  
+
+        $project->project_name     = $request->project_name;
+        $project->project_location = $request->project_location;
+        $project->project_price    = $request->project_price;
+        $project->project_desc     = $request->project_desc;
+        $project->project_status   = $request->project_status;
+        $project->project_image    = $this->upload($request['project_image'], $request['project_image_name']); 
+        $project->save();
+
+        if ($project) {
+            return ['status' => 'success' , 'message' => 'Project successfully saved!'];
+        }
+        else {
+            return ['status' => 'false' , 'message' => 'Something went wrong!'];
+        }
     }
 
     /**

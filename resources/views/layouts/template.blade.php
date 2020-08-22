@@ -90,7 +90,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link d-flex">
-      <img src="/images/EEWHITE1.png" alt="EE Logo" style="opacity: .8;" class="img-fluid">
+      <img src="/images/EEWHITE1.png" alt="EE Logo" style="opacity: .8;" class="img-fluid mx-auto">
     </a>
 
     <!-- Sidebar -->

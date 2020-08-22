@@ -15,7 +15,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return Customer::orderBy('customer_id', 'ASC')->latest()->paginate(50);       
+        return Customer::orderBy('id', 'ASC')->latest()->paginate(50);       
     }
 
     /**

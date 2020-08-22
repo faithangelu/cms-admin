@@ -41,10 +41,7 @@
                                     <td v-else>
                                         <span class="badge badge-pill badge-warning" >{{ user.status.charAt(0).toUpperCase() + user.status.substr(1) }}</span>
                                     </td>
-                                    <td>
-                                        <a @click="viewUser(user)" class="btn btn-info btn-sm">
-                                            <i class="fa fa-eye fa-fw" data-toggle="tooltip" title="View"></i>
-                                        </a>
+                                    <td>                                        
                                         <a @click="editUser(user)" class="btn btn-success btn-sm">
                                             <i class="fa fa-edit fa-fw" data-toggle="tooltip" title="Edit"></i>
                                         </a>

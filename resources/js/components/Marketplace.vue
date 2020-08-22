@@ -35,26 +35,24 @@
                                     <td>{{ project.project_id }}</td>
                                     <td>{{ project.project_name }}</td>
                                     <td>{{ project.project_location }}</td>
+                                    <!-- <td v-if="project.project_image == ''">
+                                        <img src="/data/placeholder.png"  alt="image" width="70" height="50">
+                                    </td> -->
                                     <td>
                                         <img :src="'/' + project.project_image"  alt="image" width="70" height="50">
-                                        <!-- {{ project.project_image }} -->
                                     </td>
                                     <td class="w-25">{{ project.project_desc }}</td>
-                                    <!-- <td>{{ project.project_status }}</td> -->
-                                    <td v-if="project.status == 'posted'">
+                                    <td v-if="project.project_status == 'posted'">
                                         <span class="badge badge-pill badge-success"  >{{ project.project_status.charAt(0).toUpperCase() + project.project_status.substr(1) }}</span>
                                     </td>
                                     <td v-else>
                                         <span class="badge badge-pill badge-warning" >{{ project.project_status.charAt(0).toUpperCase() + project.project_status.substr(1) }}</span>
                                     </td>
-                                    <td>
-                                        <a @click="viewUser(user)" class="btn btn-info btn-sm">
-                                            <i class="fa fa-eye fa-fw" data-toggle="tooltip" title="View"></i>
-                                        </a>
-                                        <a @click="editUser(user)" class="btn btn-success btn-sm">
+                                    <td>                                       
+                                        <a @click="editProject(project)" class="btn btn-success btn-sm">
                                             <i class="fa fa-edit fa-fw" data-toggle="tooltip" title="Edit"></i>
                                         </a>
-                                        <a @click="deleteUser(user.id)" class="btn btn-danger btn-sm">
+                                        <a @click="deleteProject(project.id)" class="btn btn-danger btn-sm">
                                             <i class="fa fa-trash fa-fw" data-toggle="tooltip" title="Delete"></i>
                                         </a>
                                     </td>
@@ -70,7 +68,7 @@
             id="projectModal"
             tabindex="-1"
             role="dialog"
-            aria-labelledby="userModalLabel"
+            aria-labelledby="projectModalLabel"
             aria-hidden="true"
         >
             <div class="modal-dialog modal-lg" role="document">
@@ -110,15 +108,12 @@
                                 <div class="col-sm-4">
                                     <label>Status</label>
                                     <div class="form-group">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="project_status" id="project_status" v-model="form.project_status" value="posted">
-                                            <label class="form-check-label" for="project_status">Posted</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="project_status" id="project_status" v-model="form.project_status" value="draft" checked>
-                                            <label class="form-check-label" for="project_status">Draft</label>
-                                        </div>
-                                        <has-error :form="form" field="project_status"></has-error>
+                                        <select name="project_status" id="project_status" class="form-control" v-model="form.project_status" :class="{'is-invalid': form.errors.has('project_location')}" >
+                                            <!-- <option :value="null" selected> Select status</option> -->
+                                            <option value="posted">Posted</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                        <has-error :form="form" field="project_status"></has-error>                                       
                                     </div>
                                 </div>    
                             </div>
@@ -138,10 +133,15 @@
                                         <has-error :form="form" field="project_location"></has-error>
                                     </div>
                                 </div>
+                                
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label>Project Price</label>
-                                        <input
+                                        <!-- <div class="input-group mb-3"> -->
+                                            <!-- <div class="input-group-prepend"> -->
+                                                <!-- <span class="input-group-text" id="basic-addon1">PHP</span> -->
+                                            <!-- </div> -->
+                                            <input
                                             v-model="form.project_price"
                                             type="text"
                                             name="project_price"
@@ -149,8 +149,10 @@
                                             :class="{
                                                 'is-invalid': form.errors.has('project_price')
                                             }"
-                                        />
-                                        <has-error :form="form" field="project_price"></has-error>
+                                            />                                    
+                                        <has-error :form="form" field="project_price"></has-error>                                       
+                                        <!-- </div> -->
+                                       
                                     </div>
                                 </div>
                             </div>                  
@@ -158,7 +160,7 @@
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <label>Project Description</label>
-                                        <textarea v-model="form.project_desc" class="form-control" rows="6" placeholder="Enter ..." :class="{
+                                        <textarea v-model="form.project_desc" class="form-control" rows="6" placeholder="Enter Project description" :class="{
                                                 'is-invalid': form.errors.has('project_desc')
                                             }"></textarea>
                                         <has-error :form="form" field="project_desc"></has-error>
@@ -169,10 +171,12 @@
                                         <label>Project Image (optional)</label>
 
                                         <div class="custom-file">
+                                            <input type="hidden" v-model="form.project_image" class="image-name" name="project_image" id="project_image">
                                             <input type="file" class="custom-file-input" id="project_image" ref="file"  name="project_image" @change="fileUpload">       
                                             <!-- <input type="file" id="file" ref="file" @change="fileUpload"/> -->
                                             <div></div>                                                 
                                             <label class="custom-file-label" for="customFile">Choose file</label>
+                                            <has-error :form="form" field="project_image"></has-error>
                                         </div>
                                     </div>                        
                                 </div>
@@ -237,20 +241,23 @@
                 $('#projectModal').modal('show');
                 $('#projectModalLabel').html('Add new Project');
             },
-            // viewUser(user) {
-            //     // this.form.get(`/user/${user}`); 
-            //     this.form.fill(user);
-            //     // $('#userModal').modal('show');
-            //     // $('#userModalLabel').html('View User');
-            //     $('.form-control').attr('readonly');
-            // },
-            // editUser(user) {
-            //     this.editmode = true;
-            //     this.form.reset();
-            //     // $('#userModal').modal('show');
-            //     // $('#userModalLabel').html('Edit User');
-            //     this.form.fill(user);
-            // },           
+            viewProject(project) {
+                // this.form.get(`/user/${user}`); 
+                this.form.fill(project);
+                
+                $('#projectModal').modal('show');
+                $('#projectModalLabel').html('View Project');
+                $('.form-control').attr('readonly');
+            },
+            editProject(project) {
+                // console.log($('.image-name').val());
+                this.editmode = true;
+                this.form.reset();
+                $('.custom-file-label').html($('.image-name').val())
+                $('#projectModal').modal('show');
+                $('#projectModalLabel').html('Edit Project');
+                this.form.fill(project);
+            },           
             loadProjects() {        
                 axios.get('marketplace').then(( {data}) => (
                     this.marketplaces = data.data
@@ -277,6 +284,22 @@
                     })
                 });       
             },
+            updateProject() {
+                this.form.put(`marketplace/${this.form.project_id}`)
+                .then(( { data }) => {
+                    // success
+                    $('#projectModal').modal('hide');
+                    Swal.fire(
+                        'Updated!',
+                        data.message,
+                        data.status
+                    )    
+                    this.loadProjects();               
+                })
+                .catch(() => {
+                    
+                });
+            }
         },        		
         created() {
             this.loadProjects();

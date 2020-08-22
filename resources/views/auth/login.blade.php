@@ -24,13 +24,15 @@
 
 <div id="app">
     <div class="login-box">
-        <div class="login-logo">
-            <a href="../../index2.html"><b>ENERGY</b> EXCHANGE</a>
-        </div>
+        
         
         <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body">
+                <div class="login-logo">
+                    <!-- <a href="../../index2.html"><b>ENERGY</b> EXCHANGE</a> -->
+                    <img src="/images/EEBLACK-sm.png" alt="">
+                </div>
                 <p class="login-box-msg">{{ __('Sign in to start your session') }}</p>
 
                 <form action="{{ route('login') }}" method="POST">

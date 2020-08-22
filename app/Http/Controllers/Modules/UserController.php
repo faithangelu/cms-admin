@@ -104,6 +104,11 @@ class UserController extends Controller
 
         $user->update($request->all());
 
+        $input['email'] = $request['email'];
+        $input['password'] = Hash::make($request['password']);
+
+        User::find($id)->update($input);
+
         return ['status' => 'success', 'message'=> 'The data is updated successfully'];
     }
 

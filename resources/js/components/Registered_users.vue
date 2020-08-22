@@ -17,12 +17,11 @@
                                     <th scope="col">Email Address</th>
                                     <th scope="col">Username</th>
                                     <th scope="col">User Type</th>
-                                    <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="customer in customers" :key="customer.id">
-                                    <td>{{ customer.customer_id }}</td>
+                                    <td>{{ customer.id }}</td>
                                     <td>{{ customer.customer_first_name }}</td>
                                     <td>{{ customer.customer_last_name }}</td>
                                     <td>{{ customer.customer_email }}</td>
